@@ -1,7 +1,9 @@
 const { getClients, setClients, ws } = require("./modules/server");
 const { Room } = require("./modules/room");
+const clientCommandReducer = require("./modules/clientCommandReduser");
 
 let rooms = [];
+let lastlistSize = 0;
 
 const connectionProcessor = () => {
   const clients = getClients();
@@ -12,19 +14,35 @@ const connectionProcessor = () => {
   rooms = rooms.filter((item) => item.isActive);
 };
 
-const roomCreationProcessor = () => {
-  const clients = getClients();
-  if (clients.length < 2) {
+const onClinetsChange = () => {
+  if (lastlistSize === getClients().length) {
     return;
   }
-  const a = clients[0];
-  const b = clients[1];
+  const clients = getClients();
+  clients.forEach((client, index, arr) => {
+    const users = arr
+      .map((item) => item.name)
+      .filter((item) => item !== client.name);
+    client.send(
+      JSON.stringify({
+        command: "userList",
+        users,
+      }),
+    );
+  });
+  lastlistSize = getClients().length;
+};
 
-  rooms.push(new Room(a, b));
-  setClients(
-    clients.filter((item) => item.name !== a.name && item.name !== b.name)
-  );
-  console.log(`Room created room for ${a.name}, ${b.name}`);
+const clientsCommandsProcessor = () => {
+  const clients = getClients();
+  clients.forEach((client) => {
+    if (client.messages.length === 0) {
+      return;
+    }
+    const message = client.messages.shift();
+    message.from = client.name;
+    clientCommandReducer(message);
+  });
 };
 
 const messageListenerProcessor = () => {
@@ -36,6 +54,7 @@ const messageListenerProcessor = () => {
 //створення кімнат
 setInterval(() => {
   connectionProcessor();
-  roomCreationProcessor();
   messageListenerProcessor();
+  clientsCommandsProcessor();
+  onClinetsChange();
 }, 500);
