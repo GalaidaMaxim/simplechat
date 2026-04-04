@@ -17,6 +17,10 @@ socket.on("connection", (ws, req) => {
     console.log("Connection without name");
     ws.close();
   }
+  if (clients.some((item) => item.name === name)) {
+    console.log("Connection name repeated");
+    ws.close();
+  }
   ws.name = name;
   ws.inRoom = false;
   ws.id = randomUUID();
