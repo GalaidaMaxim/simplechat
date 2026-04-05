@@ -24,7 +24,6 @@ socket.on("connection", (ws, req) => {
   ws.name = name;
   ws.inRoom = false;
   ws.id = randomUUID();
-  ws.send("Hello from ws");
   ws.on("pong", heartbeat);
   ws.messages = [];
   ws.on("message", (data) => {
