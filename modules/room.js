@@ -1,4 +1,9 @@
 const { ws } = require("./server");
+let rooms = [];
+
+const setRooms = (roomsNew) => {
+  rooms = roomsNew;
+};
 
 class Room {
   constructor(clientA, clientB) {
@@ -41,4 +46,4 @@ class Room {
   }
 }
 
-module.exports = { Room };
+module.exports = { Room, rooms };

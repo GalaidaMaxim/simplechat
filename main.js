@@ -1,8 +1,7 @@
 const { getClients, setClients, ws } = require("./modules/server");
-const { Room } = require("./modules/room");
+const { Room, rooms } = require("./modules/room");
 const clientCommandReducer = require("./modules/clientCommandReduser");
 
-let rooms = [];
 let lastlistSize = 0;
 
 const connectionProcessor = () => {
@@ -11,7 +10,10 @@ const connectionProcessor = () => {
   rooms.forEach((item) => {
     item.checkConnections();
   });
-  rooms = rooms.filter((item) => item.isActive);
+  while (rooms.some((item) => !item.isActive)) {
+    const index = rooms.findIndex((item) => !item.isActive);
+    rooms.splice(index, 1);
+  }
 };
 
 const onClinetsChange = () => {
@@ -27,7 +29,7 @@ const onClinetsChange = () => {
       JSON.stringify({
         command: "userList",
         users,
-      }),
+      })
     );
   });
   lastlistSize = getClients().length;
