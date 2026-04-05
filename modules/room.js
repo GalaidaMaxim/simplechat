@@ -28,7 +28,7 @@ class Room {
   };
   messageReduser = (message, a, b) => {
     if (message.command === "message") {
-      b.send(message.message);
+      b.send(JSON.stringify({ command: "message", message: message.message }));
     }
   };
   messageProcessor = () => {
