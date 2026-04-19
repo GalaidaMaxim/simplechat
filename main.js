@@ -55,8 +55,12 @@ const messageListenerProcessor = () => {
 
 //створення кімнат
 setInterval(() => {
-  connectionProcessor();
-  messageListenerProcessor();
-  clientsCommandsProcessor();
-  onClinetsChange();
+  try {
+    connectionProcessor();
+    messageListenerProcessor();
+    clientsCommandsProcessor();
+    onClinetsChange();
+  } catch (err) {
+    console.log(err);
+  }
 }, 500);
