@@ -12,9 +12,7 @@ module.exports = (message, from) => {
     );
   } else if (message.command === "createRoomAccept") {
     const clientA = getClients().find((item) => item.name === message.username);
-    const clientB = getClients().find(
-      (item) => item.name === message.usernameB
-    );
+    const clientB = getClients().find((item) => item.name === message.from);
     let response = JSON.stringify({
       command: "roomCreated",
     });
